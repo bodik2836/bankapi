@@ -8,11 +8,11 @@ use App\Customer;
 class CustomerController extends Controller
 {
 
-    function customer(string $name, string $cnp)
+    function customer(Request $request)
     {
         $customer = new Customer();
-        $customer->name = $name;
-        $customer->cnp = $cnp;
+        $customer->name = $request->input('name');
+        $customer->cnp = $request->input('cnp');
 
         if ($customer->save()) {
             return response()->json(['customer_id' => $customer->customer_id]);

@@ -8,18 +8,18 @@ use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    function transaction(int $customer_id, float $amount)
+    function transaction(Request $request)
     {
         $transaction = new Transaction();
-        $transaction->amount = $amount;
-        $transaction->customer_id_id = $customer_id;
+        $transaction->customer_id_id = $request->input('customer_id');
+        $transaction->amount = $request->input('amount');
         $transaction->date = Carbon::now()->format('Y-m-d');
 
         if ($transaction->save()) {
             return response()->json([
                 'transaction_id' => $transaction->transaction_id,
                 'customer_id_id' => $transaction->customer_id_id,
-                'amount' => $transaction->amount,
+                'amount' => (float) $transaction->amount,
                 'date' => $transaction->date->format('d.m.Y')
             ]);
         }

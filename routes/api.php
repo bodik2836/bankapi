@@ -17,9 +17,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('customer/{name}/{cnp}', 'CustomerController@customer');
-Route::get('transaction/{customer_id}/{amount}', 'TransactionController@transaction');
-Route::get('transaction/get/{customer_id}/{transaction_id}', 'TransactionController@getTransaction');
-Route::get('transaction/update/{transaction_id}/{amount}', 'TransactionController@updateTransaction');
-Route::get('transaction/{transaction_id}', 'TransactionController@deleteTransaction');
-Route::get('transaction/filter/{customer_id}/{amount}/{date}/{offset}/{limit}', 'TransactionController@filterTransaction');
+Route::post('customer/', 'CustomerController@customer');
+Route::post('transaction/', 'TransactionController@transaction');
+Route::get('transaction/{customer_id}/{transaction_id}', 'TransactionController@getTransaction');
+Route::put('transaction/{transaction_id}/{amount}', 'TransactionController@updateTransaction');
+Route::delete('transaction/{transaction_id}', 'TransactionController@deleteTransaction');
+Route::get('transaction/{customer_id}/{amount}/{date}/{offset}/{limit}', 'TransactionController@filterTransaction');
