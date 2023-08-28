@@ -14,12 +14,13 @@ class CreateTransactionsTable extends Migration
     public function up()
     {
         Schema::create('transactions', function (Blueprint $table) {
-            $table->bigIncrements('transaction_id');
-            $table->decimal('amount', 9, 2);
-//            $table->timestamp('date')->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->date('date');
-            $table->bigInteger('customer_id_id')->unsigned();
-            $table->foreign('customer_id_id')->references('customer_id')->on('customers');
+            $table->bigIncrements('id');
+            $table->decimal('amount');
+            $table->bigInteger('customer_id')->unsigned();
+            $table->timestamps();
+
+            $table->foreign('customer_id')->references('id')->on('customers');
+
             $table->charset = 'utf8';
             $table->collation = 'utf8_general_ci';
         });

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use Illuminate\Http\Request;
-use App\Customer;
 
 class CustomerController extends Controller
 {
@@ -15,7 +15,7 @@ class CustomerController extends Controller
         $customer->cnp = $request->input('cnp');
 
         if ($customer->save()) {
-            return response()->json(['customer_id' => $customer->customer_id]);
+            return response()->json(['customer_id' => $customer->id]);
         }
 
         return null;
