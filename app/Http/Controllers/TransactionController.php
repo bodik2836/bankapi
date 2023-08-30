@@ -2,26 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Api\TransactionResource;
 use App\Models\Transaction;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    function transaction(Request $request)
+    function store(Request $request)
     {
-        $transaction = new Transaction();
-        $transaction->customer_id_id = $request->input('customer_id');
-        $transaction->amount = $request->input('amount');
-        $transaction->date = Carbon::now()->format('Y-m-d');
+        $data = $request->validate([
+            'amount' => 'required|numeric',
+            'customer_id' => 'required|int',
+        ]);
+
+        $transaction = new Transaction($data);
 
         if ($transaction->save()) {
-            return response()->json([
-                'transaction_id' => $transaction->transaction_id,
-                'customer_id_id' => $transaction->customer_id_id,
-                'amount' => (float) $transaction->amount,
-                'date' => $transaction->date->format('d.m.Y')
-            ]);
+            return new TransactionResource($transaction);
         }
 
         return null;

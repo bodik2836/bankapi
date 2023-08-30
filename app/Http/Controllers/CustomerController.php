@@ -2,20 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Api\CustomerResource;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
-
-    function customer(Request $request)
+    public function store(Request $request)
     {
-        $customer = new Customer();
-        $customer->name = $request->input('name');
-        $customer->cnp = $request->input('cnp');
+        $data = $request->validate([
+            'name' => 'required|string',
+            'cnp' => 'required|string',
+        ]);
+
+        $customer = new Customer($data);
 
         if ($customer->save()) {
-            return response()->json(['customer_id' => $customer->id]);
+            return new CustomerResource($customer);
         }
 
         return null;
