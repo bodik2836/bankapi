@@ -41,20 +41,18 @@ class TransactionController extends Controller
         return null;
     }
 
-    function updateTransaction(int $transaction_id, int $amount) {
+    function update(Request $request, Transaction $transaction) {
+        $data = $request->validate([
+            'amount' => 'required|numeric',
+        ]);
 
-        Transaction::where('transaction_id', $transaction_id)->update(['amount' => $amount]);
-        $transaction = Transaction::find($transaction_id);
-        if ($transaction) {
-            return response()->json([
-                'transaction_id' => $transaction->transaction_id,
-                'customer_id_id' => $transaction->customer_id_id,
-                'amount' => (float) $transaction->amount,
-                'date' => $transaction->date->format('d.m.Y')
-            ]);
+        $isUpdated = $transaction->update($data);
+
+        if ($isUpdated) {
+            return new TransactionResource($transaction);
         }
 
-       return null;
+        return null;
     }
 
     function deleteTransaction(int $transaction_id) {

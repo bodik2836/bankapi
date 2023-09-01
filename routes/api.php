@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::apiResource('customers', 'CustomerController')->only(['store']);
 
-Route::apiResource('transactions', 'TransactionController')->only(['store']);
+Route::apiResource('transactions', 'TransactionController')->only(['store', 'update']);
 Route::get('transactions/{customer_id}/{amount}/{date}/{offset}/{limit}', 'TransactionController@filterTransaction');
 
 //Route::post('transaction/', 'TransactionController@transaction');
