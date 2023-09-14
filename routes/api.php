@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::apiResource('customers', 'CustomerController')->only(['store']);
+Route::apiResource('customers', 'CustomerController');
 
 Route::apiResource('transactions', 'TransactionController')->only(['store', 'update', 'destroy']);
 Route::get('transactions/{customerId}/{transactionId}', 'TransactionController@show');
