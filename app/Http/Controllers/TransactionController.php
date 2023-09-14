@@ -24,18 +24,14 @@ class TransactionController extends Controller
         return null;
     }
 
-    function getTransaction(int $customer_id, int $transaction_id) {
+    function show(int $customerId, int $transactionId) {
         $transaction = Transaction::where([
-            'transaction_id' => $transaction_id,
-            'customer_id_id' => $customer_id
-            ])->first();
-        //$transaction = Transaction::find($transaction_id)->where('customer_id_id', $customer_id);
+            'id' => $transactionId,
+            'customer_id' => $customerId
+        ])->first();
+
         if ($transaction) {
-            return response()->json([
-                'transaction_id' => $transaction->transaction_id,
-                'amount' => (float) $transaction->amount,
-                'date' => $transaction->date->format('d.m.Y')
-            ]);
+            return new TransactionResource($transaction);
         }
 
         return null;
@@ -55,35 +51,29 @@ class TransactionController extends Controller
         return null;
     }
 
-    function deleteTransaction(int $transaction_id) {
-        $transaction = Transaction::where('transaction_id', $transaction_id)->delete();
+    function destroy(int $transactionId) {
+        $transaction = Transaction::query()->find($transactionId);
 
-        if ($transaction) {
+        if (!$transaction) {
+            return response()->json(['msg' => 'Item not found.']);
+        }
+
+        if (Transaction::destroy($transactionId)) {
             return response()->json(['msg' => 'success']);
         } else {
             return response()->json(['msg' => 'fail']);
         }
     }
 
-    function filterTransaction(int $customer_id_id, float $amount, string $date, int $offset, int $limit) {
-        $transaction = Transaction::where([
-           'customer_id_id' => $customer_id_id,
+    function filterTransaction(int $customerId, float $amount, string $date, int $offset, int $limit) {
+        $transactions = Transaction::where([
+           'customer_id' => $customerId,
            'amount' => $amount,
-           'date' => $date
+           'created_at' => $date
         ])->offset($offset)->limit($limit)->get();
 
-        $data = [];
-        foreach ($transaction as $value) {
-            $data[] = [
-                "transaction_id" => $value->transaction_id,
-                "amount" => (float) $value->amount,
-                "date" => $value->date->format('d.m.Y'),
-                "customer_id" => $value->customer_id_id
-            ];
-        }
-
-        if ($data) {
-            return response()->json($data);
+        if ($transactions) {
+            return TransactionResource::collection($transactions);
         }
 
         return null;
