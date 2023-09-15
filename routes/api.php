@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,8 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::apiResource('customers', 'CustomerController');
+Route::apiResource('customers', TransactionController::class);
 
-Route::apiResource('transactions', 'TransactionController')->only(['store', 'update', 'destroy']);
-Route::get('transactions/{customerId}/{transactionId}', 'TransactionController@show');
-Route::get('transactions/{customerId}/{amount}/{date}/{offset}/{limit}', 'TransactionController@filterTransaction');
+Route::apiResource('transactions', TransactionController::class)->only(['store', 'update', 'destroy']);
+Route::get('transactions/{customerId}/{transactionId}', [TransactionController::class, 'show']);
+Route::get('transactions/{customerId}/{amount}/{date}/{offset}/{limit}', [TransactionController::class, 'filterTransaction']);
