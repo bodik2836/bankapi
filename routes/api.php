@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::apiResource('customers', CustomerController::class);
 
-Route::apiResource('transactions', TransactionController::class)->only(['store', 'update', 'destroy']);
 Route::get('transactions/{customerId}/{transactionId}', [TransactionController::class, 'show']);
+Route::post('transactions/{customerId}/{amount}', [TransactionController::class, 'store']);
+Route::match(['put', 'patch'], 'transactions/{transactionId}/{amount}', [TransactionController::class, 'update']);
+Route::delete('transactions/{transactionId}', [TransactionController::class, 'destroy']);
 Route::get('transactions/{customerId}/{amount}/{date}/{offset}/{limit}', [TransactionController::class, 'filterTransaction']);
