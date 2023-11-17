@@ -21,4 +21,4 @@ Route::get('transactions/{customerId}/{transactionId}', [TransactionController::
 Route::post('transactions/{customerId}/{amount}', [TransactionController::class, 'store']);
 Route::match(['put', 'patch'], 'transactions/{transactionId}/{amount}', [TransactionController::class, 'update']);
 Route::delete('transactions/{transactionId}', [TransactionController::class, 'destroy']);
-Route::get('transactions/{customerId}/{amount}/{date}/{offset}/{limit}', [TransactionController::class, 'filterTransaction']);
+Route::get('transactions/{customerId}/{amount}/{date}/{offset}/{limit}', [TransactionController::class, 'transactions']);

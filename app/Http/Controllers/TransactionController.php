@@ -57,18 +57,22 @@ class TransactionController extends Controller
         return response()->json(['status' => 'fail', 'message' => 'Item not deleted.'], 404);
     }
 
-    function filterTransaction(int $customerId, float $amount, string $date, int $offset, int $limit) {
-        $transactions = Transaction::where([
-           'customer_id' => $customerId,
-           'amount' => $amount,
-           'created_at' => $date
-        ])->offset($offset)->limit($limit)->get();
+    function transactions(int $customerId, float $amount, string $date, int $offset, int $limit) {
+        $filters = [
+            'customer_id' => $customerId,
+            'amount' => $amount,
+            'date' => $date,
+            'offset' => $offset,
+            'limit' => $limit,
+        ];
+
+        $transactions = Transaction::query()->filter($filters)->get();
 
         if ($transactions) {
             return TransactionResource::collection($transactions);
         }
 
-        return null;
+        return response()->json(['status' => 'fail', 'message' => 'Items not found.'], 404);
     }
 
 }
