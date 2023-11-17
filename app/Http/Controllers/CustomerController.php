@@ -28,7 +28,7 @@ class CustomerController extends Controller
             return new CustomerResource($customer);
         }
 
-        return null;
+        return response()->json(['status' => 'fail', 'message' => 'Item not saved.']);
     }
 
     public function show(int $customerId)
@@ -39,7 +39,7 @@ class CustomerController extends Controller
             return new CustomerResource($customer);
         }
 
-        return null;
+        return response()->json(['status' => 'fail', 'message' => 'Item not found.'], 404);
     }
 
     public function update(Request $request, int $customerId)
@@ -51,19 +51,19 @@ class CustomerController extends Controller
 
         $customer = Customer::query()->find($customerId);
 
-        if ($customer->update($data)) {
+        if ($customer && $customer->update($data)) {
             return new CustomerResource($customer);
         }
 
-        return null;
+        return response()->json(['status' => 'fail', 'message' => 'Item not found.'], 404);
     }
 
     public function destroy(int $customerId)
     {
         if (Customer::destroy($customerId)) {
-            return response()->json(['msg' => 'Item deleted.']);
+            return response()->json(['status' => 'success', 'message' => 'Item deleted.']);
         }
 
-        return response()->json(['msg' => 'Item not deleted.']);
+        return response()->json(['status' => 'fail', 'message' => 'Item not deleted.'], 404);
     }
 }
