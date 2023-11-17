@@ -3,66 +3,58 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\Api\TransactionResource;
+use App\Models\Customer;
 use App\Models\Transaction;
-use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    function store(Request $request)
-    {
-        $data = $request->validate([
-            'amount' => 'required|numeric',
-            'customer_id' => 'required|int',
-        ]);
-
-        $transaction = new Transaction($data);
-
-        if ($transaction->save()) {
-            return new TransactionResource($transaction);
-        }
-
-        return null;
-    }
-
     function show(int $customerId, int $transactionId) {
-        $transaction = Transaction::where([
+        $filters = [
             'id' => $transactionId,
             'customer_id' => $customerId
-        ])->first();
+        ];
+
+        $transaction = Transaction::query()->where($filters)->first();
 
         if ($transaction) {
             return new TransactionResource($transaction);
         }
 
-        return null;
+        return response()->json(['status' => 'fail', 'message' => 'Item not found.'], 404);
     }
 
-    function update(Request $request, Transaction $transaction) {
-        $data = $request->validate([
-            'amount' => 'required|numeric',
-        ]);
+    function store(int $customerId, float $amount)
+    {
+        $customer = Customer::query()->find($customerId);
 
-        $isUpdated = $transaction->update($data);
+        $transaction = new Transaction(['amount' => $amount]);
+        $transaction->customer()->associate($customer);
 
-        if ($isUpdated) {
+        if ($customer && $transaction->save()) {
             return new TransactionResource($transaction);
         }
 
-        return null;
+        return response()->json(['status' => 'fail', 'message' => 'Item not saved.']);
     }
 
-    function destroy(int $transactionId) {
+    function update(int $transactionId, float $amount)
+    {
         $transaction = Transaction::query()->find($transactionId);
 
-        if (!$transaction) {
-            return response()->json(['msg' => 'Item not found.']);
+        if ($transaction && $transaction->update(['amount' => $amount])) {
+            return new TransactionResource($transaction);
         }
 
+        return response()->json(['status' => 'fail', 'message' => 'Item not found.'], 404);
+    }
+
+    function destroy(int $transactionId)
+    {
         if (Transaction::destroy($transactionId)) {
-            return response()->json(['msg' => 'success']);
-        } else {
-            return response()->json(['msg' => 'fail']);
+            return response()->json(['status' => 'success', 'message' => 'Item deleted.']);
         }
+
+        return response()->json(['status' => 'fail', 'message' => 'Item not deleted.'], 404);
     }
 
     function filterTransaction(int $customerId, float $amount, string $date, int $offset, int $limit) {
